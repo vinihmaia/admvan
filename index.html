@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Van PV · Gestão de contratos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+<symbol id="vitrapi" viewBox="0 0 360 120"><text x="18" y="64" font-family="'IBM Plex Mono',ui-monospace,monospace" font-weight="600" font-size="54"><tspan fill="#8A8A8A">&lt;</tspan><tspan fill="#F7F7F5">vitr</tspan><tspan fill="#F5B700">api</tspan><tspan fill="#8A8A8A">/&gt;</tspan></text><path d="M66 86 Q172 118 278 86" fill="none" stroke="#F5B700" stroke-width="7" stroke-linecap="round"/><rect x="58" y="79" width="14" height="14" fill="#F7F7F5"/><rect x="272" y="79" width="14" height="14" fill="#F7F7F5"/></symbol>
+<symbol id="vitrapi-escuro" viewBox="0 0 360 120"><text x="18" y="64" font-family="'IBM Plex Mono',ui-monospace,monospace" font-weight="600" font-size="54"><tspan fill="#8A8A8A">&lt;</tspan><tspan fill="#1A1410">vitr</tspan><tspan fill="#F5B700">api</tspan><tspan fill="#8A8A8A">/&gt;</tspan></text><path d="M66 86 Q172 118 278 86" fill="none" stroke="#F5B700" stroke-width="7" stroke-linecap="round"/><rect x="58" y="79" width="14" height="14" fill="#1A1410"/><rect x="272" y="79" width="14" height="14" fill="#1A1410"/></symbol>
+<symbol id="pv-placa" viewBox="0 0 60 60"><rect width="60" height="60" rx="13" fill="#F6C510"/><g transform="translate(3.5 3.5) scale(.53)"><rect x="14" y="10" width="72" height="72" rx="16" fill="#0B0B0B"/><rect x="22" y="18" width="56" height="26" rx="7" fill="#F6C510"/><rect x="14" y="50" width="72" height="6" fill="#F4845F"/><rect x="6" y="30" width="7" height="12" rx="2.5" fill="#0B0B0B"/><rect x="87" y="30" width="7" height="12" rx="2.5" fill="#0B0B0B"/><rect x="22" y="60" width="14" height="9" rx="4.5" fill="#F6C510"/><rect x="64" y="60" width="14" height="9" rx="4.5" fill="#F6C510"/><path d="M40 66q10 8 20 0" fill="none" stroke="#F6C510" stroke-width="4" stroke-linecap="round"/><rect x="20" y="78" width="18" height="12" rx="4" fill="#F6C510" stroke="#0B0B0B" stroke-width="3"/><rect x="62" y="78" width="18" height="12" rx="4" fill="#F6C510" stroke="#0B0B0B" stroke-width="3"/></g></symbol>
+</svg>
+
+<!-- ===== LOGIN ===== -->
+<section class="screen login" id="tela-login">
+  <div class="lcard">
+    <div class="marca"><svg viewBox="0 0 360 120" aria-label="vitrapi"><use href="#vitrapi-escuro"/></svg><span>Tia Patrícia e Tio Vitor</span></div>
+    <h1>Entrar no painel</h1>
+    <p class="sub">Gestão de contratos e financeiro da van</p>
+    <form id="form-login">
+      <label class="campo">E-mail<input id="login-email" type="email" required autocomplete="username" placeholder="voce@exemplo.com"></label>
+      <label class="campo" style="margin-top:12px">Senha<input type="password" autocomplete="current-password" placeholder="••••••••"></label>
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+    <p class="aviso">Demonstração: qualquer e-mail entra e os dados ficam só neste navegador. No sistema real, o login será de verdade e os dados, no banco.</p>
+  </div>
+</section>
+
+<!-- ===== PAINEL ===== -->
+<div class="screen" id="app">
+  <header class="topbar">
+    <div class="topin">
+      <div class="marca"><svg viewBox="0 0 360 120" aria-label="vitrapi"><use href="#vitrapi"/></svg><span>Tia Patrícia e Tio Vitor</span></div>
+      <nav class="tabs" aria-label="Seções"><a href="#contratos" data-tab="contratos">Contratos</a><a href="#financeiro" data-tab="financeiro">Financeiro</a><a href="#responsaveis" data-tab="responsaveis">Responsáveis</a></nav>
+      <div class="quem"><span id="quem-email"></span><button class="link" id="sair" type="button">Sair</button></div>
+    </div>
+  </header>
+  <main class="wrap">
+
+    <section class="screen" id="tela-contratos">
+      <div class="head">
+        <div><h1>Contratos 2027</h1><p class="sub">Turmas da manhã e da tarde · 23 lugares cada · <span class="demo">Demonstração</span></p></div>
+        <div class="acts"><button class="btn ghost" id="exportar" type="button">Exportar planilha</button><button class="link" id="reset-demo" type="button">Recomeçar demonstração</button><a class="btn" href="#novo">+ Novo contrato</a></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Assinados</div><b class="ok" id="st-assinado">0</b></div>
+        <div class="stat"><div class="lbl">Aguardando assinatura</div><b class="warn" id="st-aguardando">0</b></div>
+        <div class="stat"><div class="lbl">Rascunhos</div><b id="st-rascunho">0</b></div>
+        <div class="stat"><div class="lbl">Vagas livres (manhã · tarde)</div><b id="st-vagas">—</b></div>
+      </div>
+      <div class="filtros">
+        <button class="chip on" data-f="todos" type="button">Todos</button><button class="chip" data-f="assinado" type="button">Assinados</button><button class="chip" data-f="aguardando" type="button">Aguardando</button><button class="chip" data-f="rascunho" type="button">Rascunhos</button><button class="chip" data-f="cancelado" type="button">Cancelados</button>
+        <input class="busca" id="busca" type="search" placeholder="Buscar por responsável, criança ou bairro">
+      </div>
+      <div class="tabela"><table><thead><tr><th>Responsável</th><th>Criança</th><th>Turma</th><th>Mensalidade</th><th>Status</th><th></th></tr></thead><tbody id="tab-contratos"></tbody></table></div>
+    </section>
+
+    <section class="screen" id="tela-novo">
+      <div class="head"><div><h1 id="novo-titulo">Novo contrato</h1><p class="sub">O sistema monta o contrato a partir do modelo e gera o link de assinatura.</p></div><div class="acts"><a class="btn ghost" href="#contratos">Voltar</a></div></div>
+      <form class="card" id="form-contrato">
+        <input type="hidden" name="id">
+        <div class="fgrid">
+          <label class="campo">Responsável (nome completo)<input name="nome" required autocomplete="off"></label>
+          <label class="campo">CPF<input name="cpf" inputmode="numeric" placeholder="000.000.000-00" required></label>
+          <label class="campo">WhatsApp<input name="tel" type="tel" placeholder="(11) 9 0000-0000"></label>
+          <label class="campo">E-mail (recebe o código de assinatura)<input name="email" type="email" required></label>
+          <label class="campo">Criança<input name="crianca" required></label>
+          <label class="campo">Série em 2027<select name="serie" required><option value="">Escolher…</option></select></label>
+          <div><span class="campo">Turma</span><div class="rads"><label class="rad"><input type="radio" name="turma" value="Manhã" required>Manhã</label><label class="rad"><input type="radio" name="turma" value="Tarde">Tarde</label></div></div>
+          <label class="campo">Endereço de embarque<input name="endereco" placeholder="Rua e número"></label>
+          <label class="campo">Bairro<input name="bairro"></label>
+          <label class="campo">Mensalidade (R$)<input name="mensalidade" type="number" min="0" step="1" required></label>
+          <label class="campo">Vencimento (dia do mês)<input name="vencimento" type="number" min="1" max="28" value="10"></label>
+          <label class="campo">Vale desconto PV (20% na 1ª mensalidade)<select name="vale"><option value="nao">Não</option><option value="sim">Sim</option></select></label>
+          <label class="campo">Início<input name="inicio" type="date" value="2027-01-01"></label>
+          <label class="campo">Fim<input name="fim" type="date" value="2027-12-31"></label>
+          <label class="campo full">Observações (entram no contrato)<textarea name="obs" placeholder="Ex.: ponto de referência, horário combinado…"></textarea></label>
+        </div>
+        <p class="erro" id="erro-contrato"></p>
+        <div class="facts"><button class="btn" type="submit">Gerar contrato e link de assinatura</button><button class="btn ghost" id="salvar-rascunho" type="button">Salvar como rascunho</button></div>
+      </form>
+    </section>
+
+    <section class="screen" id="tela-detalhe">
+      <div class="head"><div><h1 id="det-titulo">Contrato</h1><p class="sub" id="det-status"></p></div><div class="acts"><a class="btn ghost" href="#contratos">Voltar</a></div></div>
+      <div class="grid2">
+        <div class="card">
+          <h2>Dados do contrato</h2>
+          <dl class="kv" id="det-kv" style="margin-top:14px"></dl>
+          <div id="det-linkbox" hidden><p class="sub" style="margin-top:18px">Link de assinatura (envie no WhatsApp do responsável)</p><div class="linkbox"><input id="det-link" readonly><button class="btn sm" id="det-copiar" type="button">Copiar</button></div></div>
+          <div class="facts">
+            <button class="btn" id="det-gerar" type="button">Gerar link de assinatura</button>
+            <button class="btn ghost" id="det-editar" type="button">Editar</button>
+            <button class="btn or" id="det-abrir" type="button">Abrir como o responsável</button>
+            <button class="btn ghost" id="det-pdf" type="button">Baixar PDF</button>
+            <button class="link" id="det-cancelar" type="button">Cancelar contrato</button>
+          </div>
+        </div>
+        <div class="card"><h2>Linha do tempo</h2><ul class="tl" id="det-tl" style="margin-top:14px"></ul></div>
+      </div>
+    </section>
+
+    <section class="screen" id="tela-financeiro">
+      <div class="head"><div><h1>Financeiro 2027</h1><p class="sub">Clique no mês para marcar como pago. Só contratos assinados aparecem aqui · <span class="demo">Prévia da fase 2</span></p></div></div>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Recebido</div><b class="ok" id="fin-recebido">R$ 0,00</b></div>
+        <div class="stat"><div class="lbl">Em aberto no ano</div><b id="fin-aberto">R$ 0,00</b></div>
+        <div class="stat"><div class="lbl">Meses atrasados</div><b class="warn" id="fin-atrasados">0</b></div>
+      </div>
+      <div class="tabela"><table class="fin"><thead><tr><th>Contrato</th><th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th><th>Set</th><th>Out</th><th>Nov</th><th>Dez</th><th>Pagos</th></tr></thead><tbody id="tab-fin"></tbody></table></div>
+    </section>
+
+    <section class="screen" id="tela-responsaveis">
+      <div class="head"><div><h1>Responsáveis</h1><p class="sub">Quem assina os contratos. Um responsável pode ter mais de uma criança.</p></div></div>
+      <div class="tabela"><table><thead><tr><th>Responsável</th><th>Contato</th><th>Criança(s)</th><th>Contratos</th></tr></thead><tbody id="tab-resp"></tbody></table></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== TELA DO RESPONSÁVEL (assinatura) ===== -->
+<section class="screen resp" id="tela-assinar">
+  <div class="paper">
+    <div class="marca"><svg viewBox="0 0 360 120" aria-label="vitrapi"><use href="#vitrapi-escuro"/></svg><span>Tia Patrícia e Tio Vitor</span></div>
+    <div class="van"><svg aria-hidden="true"><use href="#pv-placa"/></svg><div><b>Contrato de transporte escolar 2027</b><span>Van Escolar Tia Patrícia e Tio Vitor</span></div></div>
+    <div class="texto" id="ass-texto"></div>
+    <form class="assinar" id="form-assinar" hidden>
+      <label class="check"><input type="checkbox" name="aceite">Li o contrato inteiro e concordo com todas as cláusulas.</label>
+      <label class="campo">Seu nome completo<input name="nome" autocomplete="name"></label>
+      <label class="campo">CPF<input name="cpf" inputmode="numeric" placeholder="000.000.000-00"></label>
+      <label class="campo">Código de 6 números recebido por e-mail<input name="codigo" inputmode="numeric" maxlength="6" placeholder="000000"></label>
+      <div class="codigo-demo" id="ass-codigo"></div>
+      <p class="erro" id="erro-assinar"></p>
+      <button class="btn or" type="submit">Assinar contrato</button>
+      <p class="sub" style="font-size:11.5px;line-height:1.5">Ao assinar, ficam registrados: data e hora, o código confirmado, o endereço de rede (IP) e a impressão digital do documento. O PDF assinado é enviado para o seu e-mail.</p>
+    </form>
+    <div class="ok-box" id="ass-ok" hidden></div>
+    <p style="margin:18px 0 0;text-align:center"><button class="link" id="ass-voltar" type="button">Voltar ao painel (só na demonstração)</button></p>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
