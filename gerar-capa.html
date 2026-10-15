@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerar capa · Van PV</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#141416;color:#EDEDED;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px}
+h1{font-size:20px;margin:0 0 6px}
+p{color:#C9C9CF;max-width:720px}
+canvas{width:100%;max-width:900px;height:auto;display:block;border-radius:12px;border:1px solid rgba(255,255,255,.1);margin:16px 0}
+button{background:#F6C510;color:#1A1500;border:0;border-radius:999px;padding:12px 22px;font:600 15px Inter,sans-serif;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+#info{color:#9A9AA2;font-size:13px;margin-left:12px}
+</style>
+</head>
+<body>
+<h1>Capa para a prévia do link</h1>
+<p>Esta é a imagem que aparece quando alguém compartilha o site no WhatsApp. Quando as letras aparecerem certinhas, toque em "Baixar capa.jpg" e coloque o arquivo na pasta do site, junto das fotos.</p>
+<canvas id="capa" width="1200" height="630"></canvas>
+<button id="baixar" type="button" disabled>Carregando as letras…</button><span id="info"></span>
+<script>
+/* Desenha a capa (1200 × 630, o tamanho que o WhatsApp e o Facebook usam) */
+const cv = document.getElementById('capa'), x = cv.getContext('2d');
+const SANS = 'Inter,system-ui,sans-serif', MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+function rr(px, py, w, h, r) { const p = new Path2D(); if (p.roundRect) p.roundRect(px, py, w, h, r); else p.rect(px, py, w, h); return p; }
+function T(t, px, py, fonte, cor, alinhar, ls) {
+  x.font = fonte; x.fillStyle = cor; x.textAlign = alinhar || 'left';
+  if ('letterSpacing' in x) x.letterSpacing = (ls || 0) + 'px';
+  x.fillText(t, px, py);
+}
+/* A carinha da van e a placa amarela (as mesmas do site) */
+function carinha(px, py, s, dark, yel) {
+  const R = (a, b, w, h, r, fill, stroke) => { const p = rr(px + a * s, py + b * s, w * s, h * s, r * s); if (fill) { x.fillStyle = fill; x.fill(p); } if (stroke) { x.lineWidth = 3 * s; x.strokeStyle = stroke; x.stroke(p); } };
+  R(14, 10, 72, 72, 16, dark); R(22, 18, 56, 26, 7, yel); R(14, 50, 72, 6, 0, '#F4845F');
+  R(6, 30, 7, 12, 2.5, dark); R(87, 30, 7, 12, 2.5, dark); R(22, 60, 14, 9, 4.5, yel); R(64, 60, 14, 9, 4.5, yel);
+  x.beginPath(); x.moveTo(px + 40 * s, py + 66 * s); x.quadraticCurveTo(px + 50 * s, py + 74 * s, px + 60 * s, py + 66 * s); x.lineWidth = 4 * s; x.lineCap = 'round'; x.strokeStyle = yel; x.stroke();
+  R(20, 78, 18, 12, 4, yel, dark); R(62, 78, 18, 12, 4, yel, dark);
+}
+function placa(px, py, size) { x.fillStyle = '#F6C510'; x.fill(rr(px, py, size, size, size * 13 / 60)); carinha(px + size * 3.5 / 60, py + size * 3.5 / 60, size * 53 / 60 / 100, '#0B0B0B', '#F6C510'); }
+
+function desenhar() {
+  x.textBaseline = 'alphabetic';
+  /* fundo da rodoviária, com um brilho amarelo atrás do bilhete */
+  x.fillStyle = '#0E0E10'; x.fillRect(0, 0, 1200, 630);
+  const brilho = x.createRadialGradient(890, 315, 40, 890, 315, 520);
+  brilho.addColorStop(0, 'rgba(246,197,16,.16)'); brilho.addColorStop(1, 'rgba(246,197,16,0)');
+  x.fillStyle = brilho; x.fillRect(0, 0, 1200, 630);
+
+  /* lado esquerdo: marca, frase e chamada */
+  placa(70, 66, 72);
+  T('VAN ESCOLAR', 160, 96, `600 18px ${MONO}`, '#F6C510', 'left', 4);
+  T('Tia Patrícia e Tio Vitor', 160, 128, `600 26px ${SANS}`, '#EDEDED');
+  T('Da porta de casa', 70, 250, `300 58px ${SANS}`, '#F5F3EE', 'left', -1.5);
+  T('à sala de aula.', 70, 318, `700 58px ${SANS}`, '#F5F3EE', 'left', -1.5);
+  T('Jandira e Barueri → Fundação Bradesco', 70, 382, `500 24px ${SANS}`, '#C9C9CF');
+  T('Turmas de manhã e de tarde · ida e volta', 70, 418, `400 21px ${SANS}`, '#9A9AA2');
+  x.font = `700 24px ${SANS}`; if ('letterSpacing' in x) x.letterSpacing = '0px';
+  const chamada = 'Vagas 2027 abertas', wc = x.measureText(chamada).width;
+  x.fillStyle = '#F6C510'; x.fill(rr(70, 466, wc + 56, 60, 30));
+  T(chamada, 98, 504, `700 24px ${SANS}`, '#1A1500');
+  T('tiapatricia.vercel.app', 70, 584, `500 18px ${MONO}`, '#9A9AA2');
+
+  /* lado direito: o cartão de embarque, um pouco inclinado */
+  const W = 420, H = 330;
+  x.save(); x.translate(885, 318); x.rotate(-4 * Math.PI / 180); x.translate(-W / 2, -H / 2);
+  x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 40; x.shadowOffsetY = 20;
+  x.fillStyle = '#FBF8F1'; x.fill(rr(0, 0, W, H, 20));
+  x.shadowColor = 'transparent'; x.shadowBlur = 0; x.shadowOffsetY = 0;
+  x.save(); x.clip(rr(0, 0, W, H, 20)); x.fillStyle = '#F3EBDA'; x.fillRect(0, 260, W, 70); x.restore();
+  /* topo do bilhete */
+  placa(20, 18, 40);
+  T('Van PV', 70, 38, `600 18px ${SANS}`, '#1A1410');
+  T('Tia Patrícia e Tio Vitor', 70, 58, `500 14px ${SANS}`, '#8A7F74');
+  T('CARTÃO DE EMBARQUE', 400, 38, `600 12px ${SANS}`, '#8A7F74', 'right', 1.5);
+  T('Nº 2027-JDR', 400, 58, `600 15px ${MONO}`, '#1A1410', 'right');
+  x.fillStyle = '#E8E1D2'; x.fillRect(20, 76, 380, 1.5);
+  /* origem e destino */
+  T('ORIGEM', 20, 104, `600 12px ${SANS}`, '#8A7F74', 'left', 1.5);
+  T('DESTINO', 400, 104, `600 12px ${SANS}`, '#8A7F74', 'right', 1.5);
+  T('JDR', 20, 152, `600 48px ${MONO}`, '#1A1410', 'left', -1);
+  T('CDD', 400, 152, `600 48px ${MONO}`, '#1A1410', 'right', -1);
+  T('Jandira e Barueri', 20, 176, `500 15px ${SANS}`, '#5A5047');
+  T('Fundação Bradesco', 400, 176, `500 15px ${SANS}`, '#5A5047', 'right');
+  x.save(); x.setLineDash([6, 6]); x.strokeStyle = '#C9BFAA'; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(132, 134); x.lineTo(288, 134); x.stroke(); x.restore();
+  placa(197, 121, 26);
+  /* turma, horários e trajeto */
+  x.fillStyle = '#E8E1D2'; x.fillRect(20, 192, 380, 1.5);
+  T('TURMA', 20, 214, `600 11px ${SANS}`, '#8A7F74', 'left', 1.2);
+  T('HORÁRIOS', 150, 214, `600 11px ${SANS}`, '#8A7F74', 'left', 1.2);
+  T('TRAJETO', 290, 214, `600 11px ${SANS}`, '#8A7F74', 'left', 1.2);
+  T('2027', 20, 238, `600 17px ${SANS}`, '#1A1410');
+  T('Manhã e tarde', 150, 238, `600 17px ${SANS}`, '#1A1410');
+  T('Ida e volta', 290, 238, `600 17px ${SANS}`, '#1A1410');
+  /* picote, com os furinhos das pontas */
+  x.save(); x.setLineDash([3, 6]); x.lineCap = 'round'; x.strokeStyle = 'rgba(10,6,8,.55)'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(18, 260); x.lineTo(402, 260); x.stroke(); x.restore();
+  x.fillStyle = '#0E0E10'; [0, W].forEach(px => { x.beginPath(); x.arc(px, 260, 12, 0, Math.PI * 2); x.fill(); });
+  /* canhoto: botão amarelo e código de barras */
+  x.fillStyle = '#F6C510'; x.fill(rr(20, 276, 280, 40, 10));
+  T('Quero uma vaga →', 160, 302, `700 17px ${SANS}`, '#1A1500', 'center');
+  let bx = 318; x.fillStyle = '#1A1410';
+  [2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 3, 2, 1, 1, 2, 3, 1, 2].forEach(w => { x.fillRect(bx, 276, w, 40); bx += w + 2; });
+  x.restore();
+}
+
+/* Espera as letras do Google carregarem antes de desenhar (senão sai com a letra do computador) */
+(async () => {
+  try {
+    await Promise.all(['300 58px Inter', '400 21px Inter', '500 24px Inter', '600 26px Inter', '700 58px Inter', "500 18px 'IBM Plex Mono'", "600 48px 'IBM Plex Mono'"].map(f => document.fonts.load(f)));
+  } catch (e) { /* sem internet: desenha com a letra do computador */ }
+  desenhar();
+  const b = document.getElementById('baixar'); b.disabled = false; b.textContent = 'Baixar capa.jpg';
+})();
+
+document.getElementById('baixar').addEventListener('click', () => {
+  cv.toBlob(blob => {
+    const kb = Math.round(blob.size / 1024);
+    document.getElementById('info').textContent = `Tamanho: ${kb} KB` + (kb > 300 ? ' · acima de 300 KB, o WhatsApp pode não mostrar' : ' · tamanho ok para o WhatsApp');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'capa.jpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  }, 'image/jpeg', 0.9);
+});
+</script>
+</body>
+</html>

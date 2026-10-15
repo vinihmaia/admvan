@@ -5,20 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Van Escolar Tia Patrícia e Tio Vitor · Jandira, Barueri e Osasco</title>
 <meta name="description" content="Transporte escolar de Jandira e Barueri até a Fundação Bradesco, em Osasco. Busca em casa no Centro, Jardim Gabriela, Parque Viana, Jardim Maria Helena e outros bairros. Turmas de manhã e tarde. Van vistoriada.">
-<meta name="theme-color" content="#EFEFEF">
+<meta name="theme-color" content="#141416">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Van Escolar Tia Patrícia e Tio Vitor">
 <meta property="og:title" content="Van Escolar Tia Patrícia e Tio Vitor">
 <meta property="og:description" content="Transporte escolar de Jandira e Barueri até a Fundação Bradesco, em Osasco. Busca em casa, ida e volta. Vagas 2027.">
-<meta property="og:url" content="https://TROQUE-PELO-SEU-ENDERECO/">
-<meta property="og:image" content="https://TROQUE-PELO-SEU-ENDERECO/capa.jpg">
+<meta property="og:url" content="https://tiapatricia.vercel.app/">
+<meta property="og:image" content="https://tiapatricia.vercel.app/capa.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cartão de embarque da van escolar da Tia Patrícia e do Tio Vitor, de Jandira e Barueri até a Fundação Bradesco">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://tiapatricia.vercel.app/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Patrick+Hand&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -28,6 +32,7 @@
 <symbol id="pv-placa" viewBox="0 0 60 60"><rect width="60" height="60" rx="13" fill="#F6C510"/><g style="color:#0B0B0B;--k:#F6C510"><use href="#pv-carinha" x="3.5" y="3.5" width="53" height="53"/></g></symbol>
 <symbol id="pv-placa-larga" viewBox="0 0 160 60"><rect width="160" height="60" rx="10" fill="#F6C510"/><rect x="4" y="4" width="152" height="52" rx="7" fill="none" stroke="#0B0B0B" stroke-width="1.5"/><g style="color:#0B0B0B;--k:#F6C510"><use href="#pv-carinha" x="6" y="5" width="44" height="44"/></g><text x="54" y="19" font-family="Inter,system-ui,sans-serif" font-size="5.6" font-weight="700" letter-spacing="2.2" fill="#0B0B0B">VAN ESCOLAR</text><text x="54" y="36" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="700" letter-spacing="-.2" fill="#0B0B0B">Tia Patrícia</text><text x="54" y="49.5" font-family="Inter,system-ui,sans-serif" font-size="12.5" font-weight="400" letter-spacing="-.2" fill="#0B0B0B">e Tio Vitor</text></symbol>
 <symbol id="seta" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="zap" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="arroba" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="falante" viewBox="0 0 24 24"><path d="M3 10v4h4l5 4V6l-5 4H3zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
 <!-- ===== BARRA FIXA (aparece depois do hero) ===== -->
@@ -50,7 +55,7 @@
   <a class="pill or" href="#vaga"><span class="roll"><i>Quero uma vaga</i><i aria-hidden="true">Quero uma vaga</i></span><span class="circ"><svg aria-hidden="true"><use href="#seta"/></svg></span></a>
 </aside>
 
-<!-- ===== HERO (cartão escuro) ===== -->
+<!-- ===== HERO (cartão escuro com o bilhete de embarque) ===== -->
 <div class="hwrap">
 <section class="hero" id="top">
   <div class="blob b1"></div><div class="blob b2"></div>
@@ -67,38 +72,34 @@
     </div>
   </div>
   <div class="hmid">
-    <h1 class="st" style="--d:.5s">Da porta de casa<br><b>à sala de aula,</b><br>com a Tia Patrícia e o Tio Vitor.</h1>
-    <div class="selo st" id="selo" style="--d:.7s" role="img" aria-label="Bilhete: turma 2027, vagas abertas">
-      <div class="moeda" id="moeda">
-        <div class="lado frente"><svg viewBox="0 0 200 120" aria-hidden="true">
-<path d="M12 0H121a9 9 0 0 0 18 0H188a12 12 0 0 1 12 12v96a12 12 0 0 1-12 12H139a9 9 0 0 0-18 0H12a12 12 0 0 1-12-12V12A12 12 0 0 1 12 0z" fill="#FFF8F2"/>
-<path d="M130 13v94" stroke="#0A0608" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="4 4"/>
-<text x="16" y="35" font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" letter-spacing="3" fill="#5A5047">TURMA</text>
-<text x="14" y="74" font-family="Inter,system-ui,sans-serif" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#0A0608">2027</text>
-<text x="16" y="91" font-family="Inter,system-ui,sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="#F4845F">VAGAS ABERTAS</text>
-<rect x="146" y="25" width="40" height="40" rx="9" fill="#F6C510"/>
-<g style="color:#0B0B0B;--k:#F6C510"><use href="#pv-carinha" x="148" y="27" width="36" height="36"/></g>
-<text x="166" y="85" font-family="Inter,system-ui,sans-serif" font-size="6.5" font-weight="700" letter-spacing="1" fill="#0A0608" text-anchor="middle">TIA PATRÍCIA</text>
-<text x="166" y="95" font-family="Inter,system-ui,sans-serif" font-size="6.5" font-weight="500" letter-spacing="1" fill="#0A0608" text-anchor="middle">E TIO VITOR</text>
-</svg></div>
-        <div class="lado verso"><svg viewBox="0 0 200 120" aria-hidden="true">
-<path d="M12 0H121a9 9 0 0 0 18 0H188a12 12 0 0 1 12 12v96a12 12 0 0 1-12 12H139a9 9 0 0 0-18 0H12a12 12 0 0 1-12-12V12A12 12 0 0 1 12 0z" fill="#F6C510"/>
-<path d="M130 13v94" stroke="#0B0B0B" stroke-opacity=".5" stroke-width="1.5" stroke-dasharray="4 4"/>
-<text x="16" y="52" font-family="Inter,system-ui,sans-serif" font-size="8" font-weight="700" letter-spacing="3" fill="#0B0B0B">VAN ESCOLAR</text>
-<text x="15" y="76" font-family="Inter,system-ui,sans-serif" font-size="16" font-weight="800" letter-spacing="-.3" fill="#0B0B0B">Ida e volta</text>
-<g style="color:#0B0B0B;--k:#F6C510"><use href="#pv-carinha" x="142" y="36" width="48" height="48"/></g>
-</svg></div>
-        <div class="brilho"></div>
+    <p class="hlocal st" style="--d:.35s">Jandira · Barueri · Osasco</p>
+    <h1 class="st" style="--d:.45s">Da porta de casa <b>à sala de aula,</b><br>com a Tia Patrícia e o Tio Vitor.</h1>
+    <article class="bilhete st" id="bilhete" style="--d:.65s">
+      <div class="bl-topo">
+        <div class="bl-logo"><svg aria-hidden="true"><use href="#pv-placa"/></svg><span><b>Van PV</b><small>Tia Patrícia e Tio Vitor</small></span></div>
+        <div class="bl-num"><span class="bl-rot">Cartão de embarque</span><span class="bl-mono">Nº 2027-JDR</span></div>
       </div>
-    </div>
+      <div class="bl-rota">
+        <div><span class="bl-rot">Origem</span><b class="bl-cod">JDR</b><span class="bl-cid">Jandira e Barueri</span></div>
+        <div class="bl-trilho" aria-hidden="true"><svg><use href="#pv-placa"/></svg></div>
+        <div class="dir"><span class="bl-rot">Destino</span><b class="bl-cod">CDD</b><span class="bl-cid">Fundação Bradesco</span></div>
+      </div>
+      <div class="bl-info">
+        <div><span class="bl-rot">Turma</span><b>2027</b></div>
+        <div><span class="bl-rot">Horários</span><b>Manhã e tarde</b></div>
+        <div><span class="bl-rot">Trajeto</span><b>Ida e volta</b></div>
+      </div>
+      <div class="bl-picote" aria-hidden="true"><span></span></div>
+      <div class="bl-canhoto">
+        <a class="bl-btn" id="bl-btn" href="#vaga">Quero uma vaga <svg aria-hidden="true"><use href="#seta"/></svg></a>
+        <div class="bl-barras" aria-hidden="true"><i style="width:2px"></i><i style="width:1px"></i><i style="width:3px"></i><i style="width:1px"></i><i style="width:1px"></i><i style="width:2px"></i><i style="width:4px"></i><i style="width:1px"></i><i style="width:2px"></i><i style="width:1px"></i><i style="width:3px"></i><i style="width:2px"></i><i style="width:1px"></i><i style="width:1px"></i><i style="width:2px"></i><i style="width:3px"></i><i style="width:1px"></i></div>
+      </div>
+      <div class="bl-carimbo" aria-hidden="true">BOA<b>✓</b>VIAGEM</div>
+    </article>
   </div>
-  <div class="hrow">
-    <div aria-hidden="true"></div>
-    <div class="hcta st" style="--d:.85s">
-      <small>Jandira · Barueri · Osasco</small>
-      <a class="cut wh" href="#vaga">Quero uma vaga <svg class="arr" aria-hidden="true"><use href="#seta"/></svg></a>
-    </div>
-    <div class="hsoc st" style="--d:1s">
+  <div class="hrow st" style="--d:.9s">
+    <small>Vagas 2027 abertas · manhã e tarde</small>
+    <div class="hsoc">
       <a class="cut wh cut-sm" href="https://www.instagram.com/van_tiapatricia/" target="_blank" rel="noopener" aria-label="Instagram da van"><svg aria-hidden="true"><use href="#arroba"/></svg></a>
       <a class="cut wh cut-sm" data-wa="patricia" data-msg="padrao" href="#" target="_blank" rel="noopener" aria-label="WhatsApp da Tia Patrícia"><svg aria-hidden="true"><use href="#zap"/></svg></a>
     </div>
@@ -106,42 +107,57 @@
 </section>
 </div>
 
-<!-- ===== NOSSA HISTÓRIA ===== -->
+<!-- ===== 01 · NOSSA HISTÓRIA (estrada: a van anda com a rolagem e acende cada ano) =====
+     2013 Topic · 2015 chegou a Boxer 2010 · 2019 Master 2019 · 2026 Master 2026.
+     A plaquinha amarela (est-ano) é o ano em que a van chegou; o nome (<b>) leva o modelo.
+     Para acrescentar uma parada: mais um <li> na lista, mais uma bolinha <span class="est-pare" style="--i:..."> e aumente o --n. -->
 <section class="sec w" id="historia">
   <div class="wrap">
-    <div class="carimbo"><span class="num">1</span><span class="tag">Nossa história</span></div>
+    <div class="carimbo"><span class="num">01</span><span class="tag">Nossa história</span></div>
     <h2>A van mudou, o carinho é o mesmo.</h2>
     <div class="hist-row">
-      <p class="lead">Quatorze anos levando a turma de Jandira e Barueri até a Fundação Bradesco, todos os dias de aula.</p>
+      <p class="lead">Desde 2013 levando a turma de Jandira e Barueri até a Fundação Bradesco, todos os dias de aula.</p>
       <a class="pill dk" href="#rota"><span class="roll"><i>Ver a rota</i><i aria-hidden="true">Ver a rota</i></span><span class="circ"><svg aria-hidden="true"><use href="#seta"/></svg></span></a>
     </div>
-    <div class="fotos">
-      <figure class="foto rv" style="--d:0s"><img src="foto-2016.png" alt="Tia Patrícia fazendo um coração com as mãos em frente à primeira van, conquistada em 2015" loading="lazy" decoding="async"><figcaption><b>2015</b> · A primeira van</figcaption></figure>
-      <figure class="foto rv" style="--d:.15s"><img src="foto-2019.png" alt="A van de 2019, prata com a faixa escolar" loading="lazy" decoding="async"><figcaption><b>2019</b> · A van cresceu</figcaption></figure>
-      <figure class="foto rv" style="--d:.3s"><img src="foto-2026.png" alt="Tia Patrícia ao lado da van nova, em 2026" loading="lazy" decoding="async"><figcaption><b>2026</b> · A van nova</figcaption></figure>
+    <div class="estrada" id="estrada" style="--n:4">
+      <div class="est-pista" aria-hidden="true">
+        <span class="est-faixa"></span><span class="est-trilha"></span>
+        <span class="est-pare" style="--i:0"></span><span class="est-pare" style="--i:1"></span><span class="est-pare" style="--i:2"></span><span class="est-pare" style="--i:3"></span>
+        <span class="est-van"><svg><use href="#pv-placa"/></svg></span>
+      </div>
+      <ol class="est-paradas">
+        <li class="est-item"><img class="est-foto" src="foto-2013.jpeg" alt="A Topic escolar, escura com a faixa amarela, a primeira van da Tia Patrícia, em 2013" loading="lazy" decoding="async"><span class="est-ano">2013</span><b>Topic</b><small>Onde tudo começou</small></li>
+        <li class="est-item"><img class="est-foto" src="foto-2016.png" alt="Tia Patrícia fazendo um coração com as mãos em frente à Boxer 2010, que chegou em 2015" loading="lazy" decoding="async"><span class="est-ano">2015</span><b>Boxer 2010</b><small>A primeira van mais nova</small></li>
+        <li class="est-item"><img class="est-foto" src="foto-2019.png" alt="A Master 2019, prata com a faixa escolar" loading="lazy" decoding="async"><span class="est-ano">2019</span><b>Master 2019</b><small>A van cresceu</small></li>
+        <li class="est-item"><img class="est-foto" src="foto-2026.png" alt="Tia Patrícia ao lado da Master 2026, a van nova" loading="lazy" decoding="async"><span class="est-ano">2026</span><b>Master 2026</b><small>A van nova, pronta para 2027</small></li>
+      </ol>
     </div>
   </div>
 </section>
 
-<!-- ===== DEPOIMENTO — TROQUE o texto pelas palavras reais da Tia Patrícia ===== -->
-<section class="quote" id="quote" aria-label="Palavra da Tia Patrícia">
+<!-- ===== AVISO AOS PASSAGEIROS =====
+     Texto da própria van (sem aspas, sem assinatura de pessoa), só com informações confirmadas.
+     Quando a Tia Patrícia mandar uma frase dela de verdade: troque o texto do <p class="fala"> pela frase dela,
+     ENTRE ASPAS, e troque a assinatura para "Tia Patrícia · Van escolar". -->
+<section class="quote" id="quote" aria-label="Aviso aos passageiros">
   <blockquote>
-    <p>“Cada criança entra na van pelo nome e desce com a certeza de que alguém cuidou dela no caminho. Faço isso desde 2012, e a manhã continua sendo a melhor parte do meu dia.”</p>
-    <span class="assin">Tia Patrícia · Van escolar</span>
+    <p class="aviso-rot"><svg aria-hidden="true"><use href="#falante"/></svg>Aviso aos passageiros</p>
+    <p class="fala">Atenção, famílias de Jandira e Barueri: desde 2013 a Tia Patrícia busca a turma na porta de casa e leva até a Fundação Bradesco, ida e volta. Embarque aberto para a turma de 2027.</p>
+    <span class="assin">Van Escolar Tia Patrícia e Tio Vitor</span>
   </blockquote>
 </section>
 
-<!-- ===== ROTA ===== -->
-<section class="sec w rota" id="rota">
+<!-- ===== 02 · PLATAFORMA · ROTA ===== -->
+<section class="sec g rota" id="rota">
   <div class="wrap">
     <div>
-      <div class="carimbo"><span class="num">2</span><span class="tag">Rota</span></div>
+      <div class="carimbo"><span class="num">02</span><span class="tag">Plataforma · Rota</span></div>
       <h2>Jandira → Barueri → Osasco</h2>
       <p class="lead">Buscamos a turma em casa, em Jandira e Barueri, e levamos até a Fundação Bradesco, na Cidade de Deus, em Osasco. Ida e volta, todos os dias de aula.</p>
       <ol class="tl">
-        <li class="stop"><span class="num">1</span><div><b>Jandira</b><small>Busca em casa</small><ul class="chips"><li>Centro</li><li>Jardim Tereza</li><li>Jardim Fátima</li><li>Jardim Gabriela</li><li>Jardim Alvorada</li><li>Jardim Europa</li><li>Parque Nova Jandira</li><li>Jardim São Luiz</li></ul></div></li>
-        <li class="stop"><span class="num">2</span><div><b>Barueri</b><small>Busca em casa</small><ul class="chips"><li>Jardim Califórnia</li><li>Jardim Tupanci</li><li>Vila Engenho Novo</li><li>Jardim Silveira</li><li>Parque dos Camargos</li><li>Parque Viana</li><li>Jardim Maria Helena</li><li>Jardim Belval</li><li>Jardim Mutinga</li><li>Parque Imperial</li></ul></div></li>
-        <li class="stop"><span class="num">3</span><div><b>Fundação Bradesco</b><small>Chegada na escola, em Osasco</small></div></li>
+        <li class="stop"><span class="num">01</span><div><div class="stop-cab"><b>Jandira</b><span class="st">Busca em casa</span></div><ul class="chips"><li>Centro</li><li>Jardim Tereza</li><li>Jardim Fátima</li><li>Jardim Gabriela</li><li>Jardim Alvorada</li><li>Jardim Europa</li><li>Parque Nova Jandira</li><li>Jardim São Luiz</li></ul></div></li>
+        <li class="stop"><span class="num">02</span><div><div class="stop-cab"><b>Barueri</b><span class="st">Busca em casa</span></div><ul class="chips"><li>Jardim Califórnia</li><li>Jardim Tupanci</li><li>Vila Engenho Novo</li><li>Jardim Silveira</li><li>Parque dos Camargos</li><li>Parque Viana</li><li>Jardim Maria Helena</li><li>Jardim Belval</li><li>Jardim Mutinga</li><li>Parque Imperial</li></ul></div></li>
+        <li class="stop"><span class="num">03</span><div><div class="stop-cab"><b>Fundação Bradesco</b><span class="st fim">Destino</span></div><small>Chegada na escola, na Cidade de Deus, em Osasco</small></div></li>
       </ol>
       <div class="extras">
         <div>
@@ -162,10 +178,11 @@
   </div>
 </section>
 
-<!-- ===== CUIDADOS — RASCUNHO: confira os textos com a Tia Patrícia ===== -->
-<section class="sec g cuid" id="cuidados">
-  <div class="wrap">
-    <div class="carimbo"><span class="num">3</span><span class="tag">Como funciona</span></div>
+<!-- ===== 03 · COMO FUNCIONA (lousa) =====
+     --colete = cor do ícone do colete (verde-água escuro, para ter contraste no recado). -->
+<section class="sec w cuid lousa" id="cuidados" style="--colete:#0A7F73">
+  <div class="wrap quadro-lousa">
+    <div class="carimbo"><span class="num">03</span><span class="tag">Como funciona</span></div>
     <h2>Cuidado em cada parte do caminho.</h2>
     <p class="lead">Da porta de casa até a saída da escola, sempre tem alguém de olho na turma.</p>
     <p class="grupo">Na van</p>
@@ -177,64 +194,78 @@
     <div class="cuis tres">
       <div class="cui rv" style="--d:0s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><b>Monitores lá dentro</b><span>A equipe da Tia Patrícia busca as crianças dentro da Fundação, para ninguém se perder.</span></div>
       <div class="cui rv" style="--d:.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="8" rx="1"/><path d="M12 12v9M8 21h8"/></svg><b>Fila com placa</b><span>A turma espera numa fila própria, sinalizada com a placa da Tia Patrícia.</span></div>
-      <div class="cui colete rv" style="--d:.2s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 6 4.5V20a1 1 0 0 0 1 1h4V9Z"/><path d="M15 3l3 1.5V20a1 1 0 0 1-1 1h-4V9Z"/><path d="M6 14h5M13 14h5"/></svg><b>Colete da van</b><span>Cada transporte escolar tem uma cor. Com o colete, a turma não se mistura com as outras.</span></div>
+      <!-- Recado do colete na cor verde-água (fundo claro + texto escuro) -->
+      <div class="cui colete rv" style="--d:.2s;background:#BFEDE6;color:#0B4640"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 6 4.5V20a1 1 0 0 0 1 1h4V9Z"/><path d="M15 3l3 1.5V20a1 1 0 0 1-1 1h-4V9Z"/><path d="M6 14h5M13 14h5"/></svg><b>Colete verde-água</b><span>Cada transporte escolar tem uma cor. O nosso colete é verde-água, para a turma não se misturar com as outras.</span></div>
     </div>
   </div>
 </section>
 
-<!-- ===== VALE DESCONTO (ilha escura) ===== -->
+<!-- ===== VALE DESCONTO (rodoviária: quadro de partidas + bilheteria que imprime o bilhete) ===== -->
 <section class="vale" id="vale">
   <div class="isla">
     <p class="label">Presente de boas-vindas</p>
-    <div class="scene" id="scene" role="button" tabindex="0" aria-label="Abrir a caixa do vale desconto">
-      <div class="box">
-        <div class="shadow"></div><div class="base"></div><div class="insert"></div>
-        <div class="card" id="card">
-          <div class="edge"></div>
-          <div class="face"><div class="spec"></div><div class="tagc">VALE DESCONTO</div><svg class="cplaca" aria-hidden="true"><use href="#pv-placa"/></svg><div class="chip"></div><svg class="nfc" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 6.5a6 6 0 0 1 0 7M8.5 4.5a9 9 0 0 1 0 11M12 2.5a12 12 0 0 1 0 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><div class="pct"><b>20%</b><span>na primeira mensalidade</span></div><div class="foot-card"><span>TIA PATRÍCIA E TIO VITOR</span><span>TURMA 2027</span></div></div>
-          <div class="back"><div class="assin-p">Válido até 15/01/2027 · só para novos contratos</div><span class="txt">Mostre este cartão no WhatsApp na hora de fechar a vaga.</span><svg class="bplaca" aria-hidden="true"><use href="#pv-placa-larga"/></svg></div>
+    <div class="vale-quadro" aria-hidden="true">
+      <div class="linha" data-t="VALE    -20%  "></div>
+      <div class="linha" data-t="ATÉ    15/01  "></div>
+      <div class="linha" data-t="TURMA  2027   "></div>
+    </div>
+    <div class="maq" aria-hidden="true">
+      <div class="maq-topo"><span class="maq-nome">BILHETERIA PV</span><span class="maq-luz"></span></div>
+      <span class="maq-fenda"></span>
+    </div>
+    <div class="maq-saida">
+      <div class="bv" role="img" aria-label="Bilhete vale desconto: 20% na primeira mensalidade, turma 2027, válido até 15/01/2027, só para novos contratos">
+        <div class="bv-topo"><span class="bv-rot">Vale desconto · Turma 2027</span><svg class="bv-placa"><use href="#pv-placa"/></svg></div>
+        <div class="bv-rota">
+          <div><span class="bv-rot">Origem</span><b class="bv-cod">JDR</b><span class="bv-cid">Jandira e Barueri</span></div>
+          <div class="bv-trilho"></div>
+          <div class="dir"><span class="bv-rot">Destino</span><b class="bv-cod">CDD</b><span class="bv-cid">Fundação Bradesco</span></div>
         </div>
-        <div class="wall wf"></div><div class="wall wb"></div><div class="wall wl"></div><div class="wall wr"></div>
-        <div class="lid"><div class="out"></div><div class="inn"></div></div>
-        <div class="ear el"></div><div class="ear er"></div>
+        <p class="bv-info"><b>20% de desconto</b> na 1ª mensalidade</p>
+        <div class="bv-picote"><span></span></div>
+        <div class="bv-canhoto">
+          <div><b>Válido até 15/01/2027</b><small>Só para novos contratos</small></div>
+          <div class="bv-barras"><i style="width:2px"></i><i style="width:1px"></i><i style="width:3px"></i><i style="width:1px"></i><i style="width:1px"></i><i style="width:2px"></i><i style="width:4px"></i><i style="width:1px"></i><i style="width:2px"></i><i style="width:1px"></i><i style="width:3px"></i><i style="width:2px"></i><i style="width:1px"></i><i style="width:2px"></i></div>
+        </div>
+        <div class="bv-carimbo"><small>VALE PV</small>-20%</div>
       </div>
     </div>
     <div class="copy">
       <h2>Seu vale desconto PV</h2>
-      <p>Para novas crianças que começam na van em janeiro de 2027: a primeira mensalidade sai com 20% de desconto. Válido só para novos contratos, até 15/01/2027. Toque no botão: o cartão e a mensagem vão juntos para o WhatsApp da Tia Patrícia.</p>
-      <button class="cut gold" id="btn-vale" type="button">Enviar cartão no WhatsApp <svg class="arr" aria-hidden="true"><use href="#seta"/></svg></button>
+      <p>Para novas crianças que começam na van em janeiro de 2027: a primeira mensalidade sai com 20% de desconto. Válido só para novos contratos, até 15/01/2027. Toque no botão: o bilhete e a mensagem vão juntos para o WhatsApp da Tia Patrícia.</p>
+      <button class="cut gold" id="btn-vale" type="button">Enviar bilhete no WhatsApp <svg class="arr" aria-hidden="true"><use href="#seta"/></svg></button>
       <span class="alt">Prefere só a mensagem? <a data-wa="patricia" data-msg="vale" href="#" target="_blank" rel="noopener">Chamar no WhatsApp</a></span>
     </div>
   </div>
 </section>
 
-<!-- ===== DÚVIDAS COMUNS — RASCUNHO: confira as respostas com a Tia Patrícia ===== -->
+<!-- ===== 04 · BALCÃO DE INFORMAÇÕES (respostas conferidas com o contrato do painel) ===== -->
 <section class="sec w faq" id="duvidas">
   <div class="wrap">
     <div>
-      <div class="carimbo"><span class="num">4</span><span class="tag">Dúvidas comuns</span></div>
+      <div class="carimbo"><span class="num">04</span><span class="tag">Balcão de informações</span></div>
       <h2>O que os pais sempre perguntam</h2>
       <p class="lead">Ficou alguma dúvida que não está aqui? Chama no WhatsApp que a gente responde.</p>
     </div>
     <div class="lista">
-      <details><summary>Em quais bairros a van passa?</summary><p class="resp">Buscamos em casa em Jandira e Barueri, nos bairros que estão na Rota, e levamos até a Fundação Bradesco, na Cidade de Deus, em Osasco. Se o seu bairro não está na lista, chama no WhatsApp que a gente vê se dá para atender.</p></details>
-      <details><summary>Tem turma de manhã e de tarde?</summary><p class="resp">Sim, as duas. Ida e volta, todos os dias de aula.</p></details>
-      <details><summary>Pode levar lanche na van?</summary><p class="resp">Pode. O caminho até a Fundação é um pouco longo, então a criança pode comer na van. É só mandar a lancheira.</p></details>
-      <details><summary>Como a criança encontra a van na saída?</summary><p class="resp">Nossos monitores buscam as crianças dentro da escola. A turma espera numa fila própria, com a placa da Tia Patrícia, e usa o colete da van para não se misturar com os outros transportes.</p></details>
-      <details><summary>A van é vistoriada?</summary><p class="resp">Sim. A van é vistoriada pelas prefeituras de Jandira e Osasco, e a revisão e a manutenção são feitas com frequência.</p></details>
-      <details><summary>Como funciona o vale desconto?</summary><p class="resp">Para novas crianças que começam em janeiro de 2027, a primeira mensalidade sai com 20% de desconto. Vale só para contratos novos e até 15/01/2027. É só tocar em “Enviar cartão no WhatsApp” na seção do vale: o cartão e a mensagem vão juntos.</p></details>
-      <details><summary>E se meu filho faltar um dia?</summary><p class="resp">Avise com antecedência pelo WhatsApp, inclusive quando for atestado médico. Assim a van não espera à toa e a rota não atrasa para as outras crianças.</p></details>
-      <details><summary>Tem contrato? E nas férias, paga?</summary><p class="resp">Tem. O contrato é de 12 meses, e as mensalidades de janeiro e fevereiro também são pagas, como nos outros meses. O pagamento é em dinheiro ou Pix.</p></details>
-      <details><summary>Quantas crianças vão na van?</summary><p class="resp">A van tem lugar para 23 crianças. Por isso as vagas por turma são limitadas: se tiver interesse, vale fazer o pré-cadastro logo.</p></details>
+      <details><summary><span class="fq-n">01</span><span class="fq-t">Em quais bairros a van passa?</span></summary><p class="resp">Buscamos em casa em Jandira e Barueri, nos bairros que estão na Rota, e levamos até a Fundação Bradesco, na Cidade de Deus, em Osasco. Se o seu bairro não está na lista, chama no WhatsApp que a gente vê se dá para atender.</p></details>
+      <details><summary><span class="fq-n">02</span><span class="fq-t">Tem turma de manhã e de tarde?</span></summary><p class="resp">Sim, as duas. Ida e volta, todos os dias de aula.</p></details>
+      <details><summary><span class="fq-n">03</span><span class="fq-t">Pode levar lanche na van?</span></summary><p class="resp">Pode. O caminho até a Fundação é um pouco longo, então a criança pode comer na van. É só mandar a lancheira.</p></details>
+      <details><summary><span class="fq-n">04</span><span class="fq-t">Como a criança encontra a van na saída?</span></summary><p class="resp">Nossos monitores buscam as crianças dentro da escola. A turma espera numa fila própria, com a placa da Tia Patrícia, e usa o colete verde-água da van para não se misturar com os outros transportes.</p></details>
+      <details><summary><span class="fq-n">05</span><span class="fq-t">A van é vistoriada?</span></summary><p class="resp">Sim. A van é vistoriada pelas prefeituras de Jandira e Osasco, e a revisão e a manutenção são feitas com frequência.</p></details>
+      <details><summary><span class="fq-n">06</span><span class="fq-t">Como funciona o vale desconto?</span></summary><p class="resp">Para novas crianças que começam em janeiro de 2027, a primeira mensalidade sai com 20% de desconto. Vale só para contratos novos e até 15/01/2027. É só tocar em “Enviar bilhete no WhatsApp” na seção do vale: o bilhete e a mensagem vão juntos.</p></details>
+      <details><summary><span class="fq-n">07</span><span class="fq-t">E se meu filho faltar um dia?</span></summary><p class="resp">Avise com antecedência pelo WhatsApp, inclusive quando for atestado médico. Assim a van não espera à toa e a rota não atrasa para as outras crianças.</p></details>
+      <details><summary><span class="fq-n">08</span><span class="fq-t">Tem contrato? E nas férias, paga?</span></summary><p class="resp">Tem. O contrato é de 12 meses, de janeiro a dezembro, e as mensalidades dos meses de férias (janeiro e julho) também são pagas, porque a vaga da criança fica reservada o ano todo. O pagamento é em dinheiro ou Pix.</p></details>
+      <details><summary><span class="fq-n">09</span><span class="fq-t">Quantas crianças vão na van?</span></summary><p class="resp">A van tem lugar para 23 crianças. Por isso as vagas por turma são limitadas: se tiver interesse, vale fazer o pré-cadastro logo.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ===== PRÉ-CADASTRO ===== -->
+<!-- ===== 05 · GUICHÊ · PRÉ-CADASTRO ===== -->
 <section class="sec g cadastro" id="vaga">
   <div class="wrap">
     <div>
-      <div class="carimbo"><span class="num">5</span><span class="tag">Pré-cadastro</span></div>
+      <div class="carimbo"><span class="num">05</span><span class="tag">Guichê · Pré-cadastro</span></div>
       <h2>Quero uma vaga</h2>
       <p class="lead">Preenche aqui e a gente responde no WhatsApp se tem vaga na turma e no bairro. Temos turmas de manhã e de tarde.</p>
       <div class="fol" id="fol" role="img" aria-label="Pré-cadastro aberto. A turma começa em janeiro de 2027.">
@@ -246,6 +277,7 @@
     <div class="carta" id="carta">
     <div class="voa">
     <form id="form-vaga">
+      <p class="guiche">Guichê aberto · resposta pelo WhatsApp</p>
       <label class="campo">Seu nome<input name="nome" required autocomplete="name"></label>
       <div class="row2">
         <label class="campo">Nome da criança<input name="crianca" required></label>
@@ -304,6 +336,7 @@
   </div>
   <div class="legal">
     <span>© <span id="ano">2026</span> Van Escolar Tia Patrícia e Tio Vitor · Todos os direitos reservados</span>
+    <a class="cut ol cut-xs" href="https://painel.vitrapi.com/" rel="nofollow"><span>Área da equipe</span></a>
     <a href="https://www.vitrapi.com/" target="_blank" rel="noopener" aria-label="Desenvolvido por vitrapi"><span>Desenvolvido por</span>
       <svg viewBox="0 0 360 120" height="30" role="img" aria-label="vitrapi"><text x="18" y="64" font-family="'IBM Plex Mono',ui-monospace,monospace" font-weight="600" font-size="54"><tspan fill="#8A8A8A">&lt;</tspan><tspan fill="#F7F7F5">vitr</tspan><tspan fill="#F5B700">api</tspan><tspan fill="#8A8A8A">/&gt;</tspan></text><path d="M66 86 Q172 118 278 86" fill="none" stroke="#F5B700" stroke-width="7" stroke-linecap="round"/><rect x="58" y="79" width="14" height="14" fill="#F7F7F5"/><rect x="272" y="79" width="14" height="14" fill="#F7F7F5"/></svg>
     </a>
