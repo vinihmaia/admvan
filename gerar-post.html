@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerar posts do Instagram · Van PV</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#141416;color:#EDEDED;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px}
+h1{font-size:22px;margin:0 0 6px}
+h2{font-size:18px;margin:36px 0 4px}
+p{color:#C9C9CF;max-width:720px;margin:4px 0 14px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.cartao{display:grid;gap:8px;align-content:start}
+.cartao canvas{width:100%;height:auto;border-radius:8px;border:1px solid rgba(255,255,255,.1)}
+label.foto{background:#2A2A2E;color:#EDEDED;border-radius:999px;padding:9px 16px;cursor:pointer;font-weight:500;font-size:14px;text-align:center}
+label.foto input{display:none}
+button{background:#F6C510;color:#1A1500;border:0;border-radius:999px;padding:10px 18px;font:600 14px Inter,sans-serif;cursor:pointer}
+#todos{margin-top:16px}
+#carregando{color:#9A9AA2}
+</style>
+</head>
+<body>
+<h1>Posts do Instagram · Van PV</h1>
+<p id="carregando">Carregando as letras…</p>
+
+<h2>Carrossel "Tour pelo site" (6 telas)</h2>
+<p>Nas telas 2 a 5, toque no botão cinza e escolha o print daquela parte do site. Depois baixe as 6 e poste juntas, na ordem (1 a 6), como carrossel.</p>
+<div class="grade" id="carrossel"></div>
+<button id="todos" type="button">Baixar as 6 telas</button>
+
+<h2>Post do vale desconto</h2>
+<p>Para as crianças que vão entrar agora na van, turma de 2027. Válido até 15/01/2027.</p>
+<div class="grade" id="vale"></div>
+
+<script>
+const W = 1080, H = 1350;
+const SANS = 'Inter,system-ui,sans-serif', MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+const FUNDO = '#0E0E10', AMARELO = '#F6C510', PAPEL = '#FBF8F1', CANHOTO = '#F3EBDA', BRANCO = '#F5F3EE';
+let x = null; /* o "pincel" da imagem que está sendo desenhada */
+
+/* ---------- ferramentas de desenho ---------- */
+function rr(px, py, w, h, r) { const p = new Path2D(); if (p.roundRect) p.roundRect(px, py, w, h, r); else p.rect(px, py, w, h); return p; }
+function T(t, px, py, fonte, cor, alinhar, ls) {
+  x.font = fonte; x.fillStyle = cor; x.textAlign = alinhar || 'left';
+  if ('letterSpacing' in x) x.letterSpacing = (ls || 0) + 'px';
+  x.fillText(t, px, py);
+}
+/* Quebra um texto em linhas que cabem na largura */
+function linhas(t, fonte, max) {
+  x.font = fonte; if ('letterSpacing' in x) x.letterSpacing = '0px';
+  const out = []; let l = '';
+  t.split(' ').forEach(p => { const tent = l ? l + ' ' + p : p; if (x.measureText(tent).width > max && l) { out.push(l); l = p; } else l = tent; });
+  if (l) out.push(l);
+  return out;
+}
+function carinha(px, py, s, dark, yel) {
+  const R = (a, b, w, h, r, fill, stroke) => { const p = rr(px + a * s, py + b * s, w * s, h * s, r * s); if (fill) { x.fillStyle = fill; x.fill(p); } if (stroke) { x.lineWidth = 3 * s; x.strokeStyle = stroke; x.stroke(p); } };
+  R(14, 10, 72, 72, 16, dark); R(22, 18, 56, 26, 7, yel); R(14, 50, 72, 6, 0, '#F4845F');
+  R(6, 30, 7, 12, 2.5, dark); R(87, 30, 7, 12, 2.5, dark); R(22, 60, 14, 9, 4.5, yel); R(64, 60, 14, 9, 4.5, yel);
+  x.beginPath(); x.moveTo(px + 40 * s, py + 66 * s); x.quadraticCurveTo(px + 50 * s, py + 74 * s, px + 60 * s, py + 66 * s); x.lineWidth = 4 * s; x.lineCap = 'round'; x.strokeStyle = yel; x.stroke();
+  R(20, 78, 18, 12, 4, yel, dark); R(62, 78, 18, 12, 4, yel, dark);
+}
+function placa(px, py, size) { x.fillStyle = AMARELO; x.fill(rr(px, py, size, size, size * 13 / 60)); carinha(px + size * 3.5 / 60, py + size * 3.5 / 60, size * 53 / 60 / 100, '#0B0B0B', AMARELO); }
+/* Plaquinha do quadro de partidas (com a linha no meio) */
+function plaquinha(px, py, w, h, letra, tam) {
+  x.fillStyle = '#2A2A2E'; x.fill(rr(px, py, w, h, 6));
+  if (letra) T(letra, px + w / 2, py + h / 2 + tam * 0.36, `600 ${tam}px ${MONO}`, AMARELO, 'center');
+  x.fillStyle = 'rgba(0,0,0,.7)'; x.fillRect(px, py + h / 2 - 1, w, 2);
+}
+function fundo(cx, cy) {
+  x.fillStyle = FUNDO; x.fillRect(0, 0, W, H);
+  const g = x.createRadialGradient(cx, cy, 40, cx, cy, 560);
+  g.addColorStop(0, 'rgba(246,197,16,.18)'); g.addColorStop(1, 'rgba(246,197,16,0)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+}
+function cabecalho(pagina) {
+  placa(64, 56, 56);
+  T('VAN ESCOLAR', 134, 82, `600 17px ${MONO}`, AMARELO, 'left', 3);
+  T('Tia Patrícia e Tio Vitor', 134, 110, `600 24px ${SANS}`, BRANCO);
+  if (pagina) T(pagina, 1016, 92, `500 24px ${MONO}`, '#9A9AA2', 'right');
+}
+function sombra(ligar) { x.shadowColor = ligar ? 'rgba(0,0,0,.55)' : 'transparent'; x.shadowBlur = ligar ? 44 : 0; x.shadowOffsetY = ligar ? 20 : 0; }
+/* Celular com o print do site (o print é encaixado pelo topo) */
+function celular(img, px, py, w, h) {
+  sombra(true); x.fillStyle = '#1E1E22'; x.fill(rr(px, py, w, h, 56)); sombra(false);
+  x.strokeStyle = '#3A3A40'; x.lineWidth = 3; x.stroke(rr(px, py, w, h, 56));
+  const sx = px + 14, sy = py + 14, sw = w - 28, sh = h - 28;
+  x.save(); x.clip(rr(sx, sy, sw, sh, 44));
+  if (img) { const r = Math.max(sw / img.width, sh / img.height), iw = img.width * r, ih = img.height * r; x.drawImage(img, sx + (sw - iw) / 2, sy, iw, ih); }
+  else { x.fillStyle = '#141416'; x.fillRect(sx, sy, sw, sh); T('Escolha o print', px + w / 2, py + h / 2, `500 28px ${SANS}`, '#6E6E76', 'center'); T('desta parte do site', px + w / 2, py + h / 2 + 38, `400 22px ${SANS}`, '#6E6E76', 'center'); }
+  x.restore();
+}
+/* Cartão de embarque JDR → CDD (952 × 240) */
+function bilheteRota(top) {
+  sombra(true); x.fillStyle = PAPEL; x.fill(rr(64, top, 952, 240, 22)); sombra(false);
+  T('ORIGEM', 100, top + 54, `600 18px ${SANS}`, '#8A7F74', 'left', 2);
+  T('DESTINO', 980, top + 54, `600 18px ${SANS}`, '#8A7F74', 'right', 2);
+  T('JDR', 100, top + 128, `600 74px ${MONO}`, '#1A1410', 'left', -1);
+  T('CDD', 980, top + 128, `600 74px ${MONO}`, '#1A1410', 'right', -1);
+  T('Jandira e Barueri', 100, top + 166, `500 25px ${SANS}`, '#5A5047');
+  T('Fundação Bradesco', 980, top + 166, `500 25px ${SANS}`, '#5A5047', 'right');
+  x.save(); x.setLineDash([10, 10]); x.strokeStyle = '#C9BFAA'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(300, top + 104); x.lineTo(780, top + 104); x.stroke(); x.restore();
+  placa(518, top + 82, 44);
+  T('Turma 2027 · Manhã e tarde · Ida e volta', 540, top + 214, `600 24px ${SANS}`, '#1A1410', 'center');
+}
+/* Canhoto com o endereço do site */
+function canhotoEndereco(top) {
+  x.fillStyle = PAPEL; x.fill(rr(64, top, 952, 104, 20));
+  T('ACESSE O SITE', 96, top + 38, `600 16px ${SANS}`, '#8A7F74', 'left', 2);
+  T('tiapatricia.vercel.app', 96, top + 84, `600 40px ${MONO}`, '#1A1410');
+  x.save(); x.setLineDash([3, 7]); x.lineCap = 'round'; x.strokeStyle = 'rgba(10,6,8,.5)'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(770, top + 16); x.lineTo(770, top + 88); x.stroke(); x.restore();
+  x.fillStyle = FUNDO; [top, top + 104].forEach(py => { x.beginPath(); x.arc(770, py, 12, 0, Math.PI * 2); x.fill(); });
+  T('LINK', 893, top + 46, `600 24px ${MONO}`, '#1A1410', 'center', 3);
+  T('NA BIO', 893, top + 80, `600 24px ${MONO}`, '#1A1410', 'center', 3);
+}
+
+/* ---------- carrossel ---------- */
+const PARADAS = [
+  { n: '01', titulo: 'Cartão de embarque', texto: 'Tocou em “Quero uma vaga”, o canhoto rasga e o site leva direto para o pré-cadastro.', print: 'Escolher print do topo (bilhete)' },
+  { n: '02', titulo: 'Estrada da história', texto: 'Conforme você rola a página, a vanzinha passa pela Topic de 2013, a Boxer, a Master 2019 e a Master 2026.', print: 'Escolher print da estrada' },
+  { n: '03', titulo: 'Como funciona', texto: 'Monitores dentro da escola, fila com placa e colete verde-água: tudo explicado na lousa.', print: 'Escolher print da lousa' },
+  { n: '04', titulo: 'Guichê de pré-cadastro', texto: 'Preenche pelo celular e os dados chegam direto no WhatsApp da Tia Patrícia.', print: 'Escolher print do formulário' }
+];
+function desenharCapa() {
+  fundo(540, 760); cabecalho('1/6');
+  ['T', 'O', 'U', 'R'].forEach((l, i) => plaquinha(64 + i * 80, 168, 72, 96, l, 62));
+  T('PELO SITE', 404, 204, `500 20px ${MONO}`, '#9A9AA2', 'left', 3);
+  x.fillStyle = '#5CCB98'; x.beginPath(); x.arc(412, 238, 7, 0, Math.PI * 2); x.fill();
+  T('Embarque liberado', 430, 247, `600 26px ${SANS}`, '#5CCB98');
+  T('Conheça o site', 64, 400, `300 84px ${SANS}`, BRANCO, 'left', -2);
+  T('por dentro.', 64, 498, `700 100px ${SANS}`, AMARELO, 'left', -2);
+  x.save(); x.setLineDash([10, 10]); x.strokeStyle = 'rgba(255,255,255,.25)'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(94, 610); x.lineTo(94, 1060); x.stroke(); x.restore();
+  PARADAS.forEach((p, i) => {
+    const y = 610 + i * 150;
+    x.fillStyle = AMARELO; x.beginPath(); x.arc(94, y, 15, 0, Math.PI * 2); x.fill();
+    T('PARADA ' + p.n, 136, y - 6, `500 20px ${MONO}`, AMARELO, 'left', 2);
+    T(p.titulo, 136, y + 34, `600 38px ${SANS}`, BRANCO);
+  });
+  x.fillStyle = AMARELO; x.fill(rr(64, 1180, 440, 78, 39));
+  T('Arrasta para o lado →', 284, 1230, `700 28px ${SANS}`, '#1A1500', 'center');
+}
+function desenharParada(p, pagina, img) {
+  fundo(540, 900); cabecalho(pagina + '/6');
+  x.font = `600 24px ${MONO}`; if ('letterSpacing' in x) x.letterSpacing = '3px';
+  const rot = 'PARADA ' + p.n, wr = x.measureText(rot).width;
+  plaquinha(64, 146, wr + 40, 52, '', 0);
+  T(rot, 84, 181, `600 24px ${MONO}`, AMARELO, 'left', 3);
+  T(p.titulo, 64, 272, `700 66px ${SANS}`, BRANCO, 'left', -1.5);
+  linhas(p.texto, `400 30px ${SANS}`, 952).slice(0, 3).forEach((l, k) => T(l, 64, 324 + k * 42, `400 30px ${SANS}`, '#C9C9CF'));
+  celular(img, 320, 450, 440, 870);
+  T('Arrasta →', 1016, 1300, `600 26px ${SANS}`, AMARELO, 'right');
+}
+function desenharFim() {
+  fundo(540, 640); cabecalho('6/6');
+  ['C', 'H', 'E', 'G', 'O', 'U'].forEach((l, i) => plaquinha(64 + i * 80, 168, 72, 96, l, 62));
+  T('Agora é', 64, 400, `300 84px ${SANS}`, BRANCO, 'left', -2);
+  T('com você.', 64, 498, `700 100px ${SANS}`, AMARELO, 'left', -2);
+  T('Faça o pré-cadastro para 2027 pelo site.', 64, 562, `400 32px ${SANS}`, '#C9C9CF');
+  bilheteRota(620);
+  canhotoEndereco(910);
+  T('Ou chama no WhatsApp', 64, 1124, `500 26px ${SANS}`, '#C9C9CF');
+  T('(11) 99692-9358', 64, 1180, `600 46px ${MONO}`, BRANCO);
+}
+
+/* ---------- post do vale desconto ---------- */
+function desenharVale() {
+  fundo(540, 760); cabecalho(null);
+  ['V', 'A', 'L', 'E', '', '-', '2', '0', '%'].forEach((l, i) => plaquinha(64 + i * 100, 160, 92, 116, l, 74));
+  T('Presente de', 64, 400, `300 80px ${SANS}`, BRANCO, 'left', -2);
+  T('boas-vindas.', 64, 494, `700 92px ${SANS}`, AMARELO, 'left', -2);
+  /* bilhete do vale (igual ao do site) */
+  const top = 560;
+  sombra(true); x.fillStyle = PAPEL; x.fill(rr(64, top, 952, 420, 22)); sombra(false);
+  x.save(); x.clip(rr(64, top, 952, 420, 22)); x.fillStyle = CANHOTO; x.fillRect(64, top + 350, 952, 70); x.restore();
+  T('VALE DESCONTO · TURMA 2027', 104, top + 52, `600 22px ${SANS}`, '#8A7F74', 'left', 3);
+  placa(936, top + 22, 52);
+  x.fillStyle = '#E8E1D2'; x.fillRect(104, top + 96, 872, 2);
+  T('ORIGEM', 104, top + 136, `600 18px ${SANS}`, '#8A7F74', 'left', 2);
+  T('DESTINO', 976, top + 136, `600 18px ${SANS}`, '#8A7F74', 'right', 2);
+  T('JDR', 104, top + 210, `600 74px ${MONO}`, '#1A1410', 'left', -1);
+  T('CDD', 976, top + 210, `600 74px ${MONO}`, '#1A1410', 'right', -1);
+  T('Jandira e Barueri', 104, top + 248, `500 25px ${SANS}`, '#5A5047');
+  T('Fundação Bradesco', 976, top + 248, `500 25px ${SANS}`, '#5A5047', 'right');
+  x.save(); x.setLineDash([10, 10]); x.strokeStyle = '#C9BFAA'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(300, top + 186); x.lineTo(780, top + 186); x.stroke(); x.restore();
+  x.fillStyle = '#E8E1D2'; x.fillRect(104, top + 276, 872, 2);
+  T('20% de desconto', 104, top + 322, `700 34px ${SANS}`, '#1A1410');
+  const w20 = x.measureText('20% de desconto').width;
+  T('na 1ª mensalidade', 104 + w20 + 12, top + 322, `500 30px ${SANS}`, '#5A5047');
+  x.save(); x.setLineDash([3, 8]); x.lineCap = 'round'; x.strokeStyle = 'rgba(10,6,8,.5)'; x.lineWidth = 3;
+  x.beginPath(); x.moveTo(84, top + 350); x.lineTo(996, top + 350); x.stroke(); x.restore();
+  x.fillStyle = FUNDO; [64, 1016].forEach(px => { x.beginPath(); x.arc(px, top + 350, 16, 0, Math.PI * 2); x.fill(); });
+  T('Válido até 15/01/2027', 104, top + 397, `700 28px ${SANS}`, '#1A1410');
+  T('Só para novos contratos', 976, top + 397, `500 24px ${SANS}`, '#5A5047', 'right');
+  /* carimbo vermelho no meio do trilho */
+  x.save(); x.translate(540, top + 180); x.rotate(-14 * Math.PI / 180);
+  x.fillStyle = 'rgba(251,248,241,.94)'; x.beginPath(); x.arc(0, 0, 84, 0, Math.PI * 2); x.fill();
+  x.strokeStyle = '#C62828'; x.lineWidth = 5; x.beginPath(); x.arc(0, 0, 84, 0, Math.PI * 2); x.stroke();
+  x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 72, 0, Math.PI * 2); x.stroke();
+  T('VALE PV', 0, -26, `600 15px ${SANS}`, '#C62828', 'center', 3);
+  T('-20%', 0, 20, `600 46px ${MONO}`, '#C62828', 'center');
+  T('1ª MENSALIDADE', 0, 46, `600 12px ${SANS}`, '#C62828', 'center', 1.5);
+  x.restore();
+  /* regras */
+  ['Só para crianças que vão entrar agora na van', 'Turma de 2027, manhã ou tarde', 'Válido até 15/01/2027 · vagas limitadas'].forEach((r, i) => {
+    const y = 1046 + i * 52;
+    plaquinha(64, y - 31, 44, 40, '', 0);
+    T('✓', 86, y - 2, `700 26px ${SANS}`, AMARELO, 'center');
+    T(r, 126, y, `500 30px ${SANS}`, BRANCO);
+  });
+  /* contato */
+  T('Garanta pelo site ou pelo WhatsApp', 64, 1258, `500 25px ${SANS}`, '#C9C9CF');
+  T('(11) 99692-9358', 64, 1304, `600 38px ${MONO}`, BRANCO);
+  T('Link na bio', 1016, 1258, `600 25px ${SANS}`, AMARELO, 'right');
+  T('tiapatricia.vercel.app', 1016, 1302, `500 24px ${MONO}`, '#9A9AA2', 'right');
+}
+
+/* ---------- montagem da página (cada imagem com seu botão) ---------- */
+const doCarrossel = [];
+function baixar(c) {
+  c.cv.toBlob(blob => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = c.nome + '.jpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  }, 'image/jpeg', 0.92);
+}
+function cartao(destino, nome, desenhar, rotuloPrint) {
+  const box = document.createElement('div'); box.className = 'cartao';
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; box.appendChild(cv);
+  const c = { cv, nome, img: null };
+  c.redesenhar = () => { x = cv.getContext('2d'); x.textBaseline = 'alphabetic'; desenhar(c.img); };
+  if (rotuloPrint) {
+    const lab = document.createElement('label'); lab.className = 'foto'; lab.textContent = rotuloPrint;
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.addEventListener('change', e => {
+      const arq = e.target.files[0]; if (!arq) return;
+      const leitor = new FileReader();
+      leitor.onload = () => { const im = new Image(); im.onload = () => { c.img = im; c.redesenhar(); }; im.src = leitor.result; };
+      leitor.readAsDataURL(arq);
+    });
+    lab.appendChild(inp); box.appendChild(lab);
+  }
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Baixar ' + nome; b.addEventListener('click', () => baixar(c));
+  box.appendChild(b);
+  destino.appendChild(box);
+  c.redesenhar();
+  return c;
+}
+
+(async () => {
+  try {
+    await Promise.all(['300 84px Inter', '400 30px Inter', '500 25px Inter', '600 38px Inter', '700 100px Inter', "500 20px 'IBM Plex Mono'", "600 74px 'IBM Plex Mono'"].map(f => document.fonts.load(f)));
+  } catch (e) { /* sem internet: usa a letra do computador */ }
+  document.getElementById('carregando').hidden = true;
+  const car = document.getElementById('carrossel');
+  doCarrossel.push(cartao(car, 'carrossel-1', desenharCapa));
+  PARADAS.forEach((p, i) => doCarrossel.push(cartao(car, 'carrossel-' + (i + 2), img => desenharParada(p, i + 2, img), p.print)));
+  doCarrossel.push(cartao(car, 'carrossel-6', desenharFim));
+  cartao(document.getElementById('vale'), 'post-vale-desconto', desenharVale);
+})();
+/* Baixa as 6 telas, uma de cada vez (o navegador pode perguntar se permite vários downloads: diga que sim) */
+document.getElementById('todos').addEventListener('click', () => doCarrossel.forEach((c, i) => setTimeout(() => baixar(c), i * 600)));
+</script>
+</body>
+</html>

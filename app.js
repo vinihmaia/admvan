@@ -65,32 +65,6 @@ if (bilhete && blBtn) {
   });
 }
 
-/* =================== ESTRADA DA HISTÓRIA (a van anda com a rolagem e acende cada ano) ===================
-   --p vai de 0 a 1: 0 = a seção acabou de aparecer embaixo da tela, 1 = já passou quase toda.
-   Cada foto acende quando a van chega perto dela. Quem pediu "menos movimento" vê tudo aceso. */
-const estrada = document.getElementById('estrada');
-if (estrada && !reduce) {
-  const itensE = [...estrada.querySelectorAll('.est-item')], paresE = [...estrada.querySelectorAll('.est-pare')];
-  const LIMITES = [0.02, 0.5, 0.98]; /* em que ponto da estrada cada foto acende */
-  estrada.classList.add('anima');
-  let pedido = false;
-  const andar = () => {
-    pedido = false;
-    const r = estrada.getBoundingClientRect(), vh = innerHeight;
-    const p = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (vh * 0.15 + r.height)));
-    estrada.style.setProperty('--p', p.toFixed(3));
-    itensE.forEach((it, i) => {
-      const on = p >= LIMITES[i];
-      it.classList.toggle('on', on);
-      if (paresE[i]) paresE[i].classList.toggle('on', on);
-    });
-  };
-  const pedir = () => { if (!pedido) { pedido = true; requestAnimationFrame(andar); } };
-  addEventListener('scroll', pedir, { passive: true });
-  addEventListener('resize', pedir);
-  andar();
-}
-
 /* =================== MAPA (cinza escuro + rota real, linha amarela da rodoviária) =================== */
 async function iniciarMapa() {
   const P = CONFIG.paradas, badge = document.getElementById('kmbadge');

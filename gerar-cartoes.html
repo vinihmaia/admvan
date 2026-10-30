@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartão gold · vale 20% · Van PV</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<!-- Gerador de QR code e gerador de PDF (vêm da internet) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+body{margin:0;background:#141416;color:#EDEDED;font:15px/1.6 Inter,system-ui,sans-serif;padding:24px}
+h1{font-size:22px;margin:0 0 6px}
+p{color:#C9C9CF;max-width:760px;margin:4px 0 12px}
+a{color:#F6C510}
+.faces{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-width:1100px;margin-top:16px}
+figure{margin:0;display:grid;gap:8px}
+figcaption{font:500 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#9A9AA2}
+canvas{width:100%;height:auto;display:block;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+.botoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+button{background:#2A2A2E;color:#EDEDED;border:0;border-radius:999px;padding:10px 18px;font:500 14px Inter,sans-serif;cursor:pointer}
+button.pdf{background:#F6C510;color:#1A1500;font-weight:600}
+label.guia{display:inline-flex;align-items:center;gap:8px;color:#C9C9CF;cursor:pointer}
+.rosa{color:#FF2D95;font-weight:600}.azul{color:#00B7FF;font-weight:600}
+#erro{display:none;background:#3A1212;border:1px solid #C62828;border-radius:12px;padding:12px 16px;max-width:760px}
+.foto{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin:14px 0 6px;padding:14px 16px;background:#1E1E22;border-radius:14px;max-width:1100px;box-sizing:border-box}
+.btn-foto{background:#F6C510;color:#1A1500;border-radius:999px;padding:10px 18px;font-weight:600;cursor:pointer}
+.btn-foto input{display:none}
+.foto label.aj{display:flex;align-items:center;gap:8px;color:#C9C9CF;font-size:14px}
+.foto input[type=range]{width:130px;accent-color:#F6C510}
+</style>
+</head>
+<body>
+<h1>Cartão gold · vale 20% · Van PV</h1>
+<p id="carregando">Carregando as letras…</p>
+<p id="erro">O gerador de QR code não carregou (sem internet?). Recarregue a página antes de baixar, senão o cartão sai sem o QR.</p>
+<p>Tamanho: 9 × 5 cm, com 3 mm de sangria em cada lado (o arquivo tem 9,6 × 5,6 cm), em 300 dpi. Os cantos arredondados são feitos pela gráfica.</p>
+<p><b>Antes de imprimir, teste:</b> aponte a câmera do celular para o QR do verso na tela, ou toque aqui: <a id="link-vale" target="_blank" rel="noopener">abrir o link do QR</a>.</p>
+
+<div class="foto">
+  <label class="btn-foto">Escolher foto da van<input type="file" id="arquivo" accept="image/*"></label>
+  <label class="aj">Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="1"></label>
+  <label class="aj">Para os lados <input type="range" id="fx" min="0" max="1" step="0.01" value="0.5"></label>
+  <label class="aj">Para cima e para baixo <input type="range" id="fy" min="0" max="1" step="0.01" value="0.4"></label>
+</div>
+
+<label class="guia"><input type="checkbox" id="guia"> Mostrar linhas de corte (<span class="rosa">rosa</span> = corte · <span class="azul">azul</span> = margem de segurança). Elas não saem no arquivo.</label>
+<div class="faces" id="faces"></div>
+<div class="botoes" id="botoes"></div>
+
+<script>
+/* =================== CONFIGURAÇÃO (edite aqui) =================== */
+const CONFIG = {
+  patricia: { tel: '(11) 99692-9358', wa: '5511996929358' }, // CONFIRA antes de imprimir
+  msgVale: 'Oi! Quero usar meu vale PV de 20% (turma 2027).',
+  validade: '15/01/2027',
+  validadeCurta: '15/01/27',
+  rota: 'Jandira e Barueri → Fundação Bradesco, Osasco',
+  turmas: 'Turmas de manhã e de tarde · ida e volta',
+};
+const linkZap = msg => `https://wa.me/${CONFIG.patricia.wa}?text=${encodeURIComponent(msg)}`;
+
+/* A foto escolhida e o enquadramento (zoom e posição) */
+const FOTO = { img: null, zoom: 1, fx: 0.5, fy: 0.4 };
+
+/* =================== MEDIDAS (tudo em milímetros, medidos a partir da linha de corte) =================== */
+const K = 300 / 25.4;      // pontos por milímetro, em 300 dpi
+const S = 3;               // sangria: 3 mm de fundo a mais em cada lado
+const W = 90 + S * 2, H = 50 + S * 2;
+const u = mm => mm * K;    // converte milímetro em ponto da imagem
+const SANS = 'Inter,system-ui,sans-serif', MONO = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+const OURO = '#E2BB57', BRILHO = '#EDCF7C', TINTA = '#241904', TINTA2 = '#45320A', CREME = '#FFF6DD';
+let x = null; /* o "pincel" da imagem que está sendo desenhada */
+
+/* =================== FERRAMENTAS DE DESENHO =================== */
+function rrPx(px, py, w, h, r) { const p = new Path2D(); if (p.roundRect) p.roundRect(px, py, w, h, r); else p.rect(px, py, w, h); return p; }
+function rr(a, b, w, h, r) { return rrPx(u(a), u(b), u(w), u(h), u(r)); }
+/* Escreve um texto (posição e tamanho em mm) */
+function T(t, a, b, tam, peso, cor, fam, alinhar, ls) {
+  x.font = `${peso} ${u(tam)}px ${fam || SANS}`; x.fillStyle = cor; x.textAlign = alinhar || 'left';
+  if ('letterSpacing' in x) x.letterSpacing = u(ls || 0) + 'px';
+  x.fillText(t, u(a), u(b));
+}
+/* Chip de cartão de banco (9 × 7 mm) */
+function chip(a, b) {
+  x.save();
+  const p = rr(a, b, 9, 7, 1.2);
+  x.fillStyle = '#F3DA8E'; x.fill(p);
+  x.strokeStyle = '#8A6A1C'; x.lineWidth = u(.2); x.stroke(p);
+  x.beginPath();
+  [[0, 2.3, 9, 2.3], [0, 4.7, 9, 4.7], [3, 0, 3, 2.3], [6, 0, 6, 2.3], [3, 4.7, 3, 7], [6, 4.7, 6, 7], [3, 2.3, 3, 4.7]]
+    .forEach(([x1, y1, x2, y2]) => { x.moveTo(u(a + x1), u(b + y1)); x.lineTo(u(a + x2), u(b + y2)); });
+  x.stroke(); x.restore();
+}
+/* Simbolozinho de "aproximação" (as três ondinhas) */
+function ondas(a, b, cor) {
+  x.save(); x.strokeStyle = cor; x.lineWidth = u(.35); x.lineCap = 'round'; x.beginPath();
+  x.moveTo(u(a + .6), u(b + 1.6)); x.quadraticCurveTo(u(a + 2), u(b + 3.5), u(a + .6), u(b + 5.4));
+  x.moveTo(u(a + 2), u(b + .9)); x.quadraticCurveTo(u(a + 4.1), u(b + 3.5), u(a + 2), u(b + 6.1));
+  x.moveTo(u(a + 3.4), u(b + .3)); x.quadraticCurveTo(u(a + 6.1), u(b + 3.5), u(a + 3.4), u(b + 6.7));
+  x.stroke(); x.restore();
+}
+/* Moldura com a foto da van. A foto "cobre" a moldura inteira (como um porta-retrato) e o que sobra é cortado.
+   zoom aproxima; fx e fy escolhem qual parte da foto aparece (0 = começo, 1 = fim). */
+function fotoMoldura(a, b, w, h, r) {
+  const p = rr(a, b, w, h, r);
+  x.save(); x.clip(p);
+  if (FOTO.img) {
+    const im = FOTO.img, fw = u(w), fh = u(h);
+    const esc = Math.max(fw / im.width, fh / im.height) * FOTO.zoom;
+    const iw = im.width * esc, ih = im.height * esc;
+    x.drawImage(im, u(a) - (iw - fw) * FOTO.fx, u(b) - (ih - fh) * FOTO.fy, iw, ih);
+  } else {
+    x.fillStyle = '#D9CDB4'; x.fill(p);
+    T('Escolha a foto', a + w / 2, b + h / 2 + .6, 1.8, 600, TINTA2, SANS, 'center');
+  }
+  x.restore();
+  x.save(); x.strokeStyle = TINTA; x.lineWidth = u(.35); x.stroke(p); x.restore();
+}
+/* Fundo dourado (passa da linha de corte por causa da sangria) com a faixa de brilho */
+function fundoOuro(brilho) {
+  x.fillStyle = OURO; x.fillRect(u(-S), u(-S), u(W), u(H));
+  x.fillStyle = BRILHO; x.beginPath();
+  brilho.forEach(([a, b], i) => (i ? x.lineTo(u(a), u(b)) : x.moveTo(u(a), u(b))));
+  x.closePath(); x.fill();
+}
+/* QR code que abre o WhatsApp: escuro em fundo claro, com a margem clara obrigatória em volta */
+function qr(texto, a, b, t, cor, fundo) {
+  x.fillStyle = fundo; x.fill(rr(a, b, t, t, 1.2));
+  if (typeof qrcode === 'undefined') { T('QR não carregou', a + t / 2, b + t / 2, 2, 600, '#C62828', SANS, 'center'); return; }
+  const q = qrcode(0, 'M'); q.addData(texto); q.make();
+  const n = q.getModuleCount(), zona = 4, m = t / (n + zona * 2);
+  const ox = u(S), oy = u(S); /* para arredondar no pixel certo, considerando a sangria */
+  x.fillStyle = cor;
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (!q.isDark(r, c)) continue;
+    const x0 = Math.round(ox + u(a + (c + zona) * m)) - ox, x1 = Math.round(ox + u(a + (c + zona + 1) * m)) - ox;
+    const y0 = Math.round(oy + u(b + (r + zona) * m)) - oy, y1 = Math.round(oy + u(b + (r + zona + 1) * m)) - oy;
+    x.fillRect(x0, y0, x1 - x0, y1 - y0);
+  }
+}
+/* Guias que só aparecem na tela: rosa = corte, azul = margem de segurança */
+function guias() {
+  x.save(); x.setLineDash([u(1), u(.8)]); x.lineWidth = u(.18);
+  x.strokeStyle = '#FF2D95'; x.strokeRect(0, 0, u(90), u(50));
+  x.strokeStyle = '#00B7FF'; x.strokeRect(u(3), u(3), u(84), u(44));
+  x.restore();
+}
+
+/* =================== FRENTE =================== */
+function frente() {
+  fundoOuro([[22.96, -S], [36.96, -S], [19.04, 50 + S], [5.04, 50 + S]]);
+  T('PV', 6, 10.5, 4, 700, TINTA);
+  T('GOLD', 14.8, 10.2, 1.7, 600, TINTA2, MONO, 'left', .6);
+  T('VALE DESCONTO', 84, 9.5, 1.7, 600, TINTA2, SANS, 'right', .3);
+  fotoMoldura(58, 12.5, 26, 21.5, 1.5); /* a foto da van, no lugar da plaquinha */
+  chip(7, 15.5);
+  ondas(19, 15.5, TINTA2);
+  [['2027', 7], ['PV20', 19.5], ['JDR', 32], ['CDD', 42]].forEach(([t, a]) => T(t, a, 31.5, 3.6, 600, TINTA, MONO, 'left', .4));
+  T('VÁLIDO ATÉ', 7, 36.3, 1.6, 600, TINTA2, MONO);
+  T(CONFIG.validadeCurta, 7, 39.6, 2.2, 600, TINTA, MONO);
+  T('DESCONTO NA', 24, 36.3, 1.6, 600, TINTA2, MONO);
+  T('1ª MENSALIDADE', 24, 39.6, 2.2, 600, TINTA, MONO);
+  T('TURMA 2027 · NOVOS CONTRATOS', 7, 45, 1.9, 600, TINTA, MONO, 'left', .3);
+  T('-20%', 84, 45, 9, 700, TINTA, SANS, 'right');
+}
+
+/* =================== VERSO =================== */
+function verso() {
+  fundoOuro([[54.96, -S], [68.96, -S], [51.04, 50 + S], [37.04, 50 + S]]);
+  /* tarja escura de ponta a ponta, com o nome da van */
+  x.fillStyle = TINTA; x.fillRect(u(-S), u(5), u(W), u(8));
+  T('VAN ESCOLAR · TIA PATRÍCIA E TIO VITOR', 6, 10.2, 1.8, 600, '#E9C766', MONO, 'left', .4);
+  /* como usar */
+  T('Aponte a câmera no código e', 6, 19.5, 2, 400, TINTA);
+  T('mande a mensagem pronta.', 6, 22.5, 2, 400, TINTA);
+  T('WhatsApp ' + CONFIG.patricia.tel, 6, 27.5, 2, 600, TINTA, MONO);
+  /* linha fina separando */
+  x.fillStyle = 'rgba(36,25,4,.3)'; x.fillRect(u(6), u(30.4), u(48), u(.25));
+  /* onde atendemos e turnos */
+  T('ATENDEMOS', 6, 34.5, 1.6, 600, TINTA2, MONO, 'left', .3);
+  T(CONFIG.rota, 6, 38, 1.9, 600, TINTA);
+  T(CONFIG.turmas, 6, 41.3, 1.8, 400, TINTA2);
+  T(`Válido até ${CONFIG.validade} · só novos contratos`, 6, 45.3, 1.6, 600, TINTA2);
+  /* QR para o WhatsApp */
+  qr(linkZap(CONFIG.msgVale), 59, 16, 25, TINTA, CREME);
+  T('Aponte a câmera', 71.5, 44.5, 1.8, 600, TINTA, SANS, 'center');
+}
+
+/* =================== MONTAGEM DA PÁGINA =================== */
+const NOME = 'cartao-gold-vale';
+const FACES = [['frente', frente], ['verso', verso]];
+const CW = Math.round(u(W)), CH = Math.round(u(H));
+const chkGuia = document.getElementById('guia'), previas = [];
+
+function pintar(cv, desenhar, comGuia) {
+  x = cv.getContext('2d');
+  x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, cv.width, cv.height);
+  x.setTransform(1, 0, 0, 1, u(S), u(S)); /* o ponto (0, 0) passa a ser o canto da linha de corte */
+  x.textBaseline = 'alphabetic'; x.setLineDash([]);
+  desenhar();
+  if (comGuia) guias();
+}
+/* Imagem limpa (sem guias), para baixar */
+function imagem(desenhar) { const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH; pintar(cv, desenhar, false); return cv; }
+function baixarArquivo(blob, nome) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+/* Avisa se ainda não escolheu a foto (para não mandar à gráfica com o quadro vazio) */
+const fotoOk = () => FOTO.img || confirm('Você ainda não escolheu a foto da van. Baixar mesmo assim?');
+function baixarPNG(face, desenhar) {
+  if (face === 'frente' && !fotoOk()) return;
+  imagem(desenhar).toBlob(b => baixarArquivo(b, `${NOME}-${face}.png`), 'image/png');
+}
+/* PDF com 2 páginas (frente e verso), cada uma com 96 × 56 mm */
+function baixarPDF() {
+  if (!window.jspdf) { alert('O gerador de PDF não carregou. Confira a internet e recarregue a página.'); return; }
+  if (!fotoOk()) return;
+  const doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: [W, H] });
+  FACES.forEach(([, desenhar], i) => {
+    if (i) doc.addPage([W, H], 'landscape');
+    doc.addImage(imagem(desenhar).toDataURL('image/png'), 'PNG', 0, 0, W, H);
+  });
+  doc.save(NOME + '.pdf');
+}
+function montar() {
+  const faces = document.getElementById('faces'), bt = document.getElementById('botoes');
+  FACES.forEach(([face, desenhar]) => {
+    const fig = document.createElement('figure'), cap = document.createElement('figcaption'), cv = document.createElement('canvas');
+    cap.textContent = face; cv.width = CW; cv.height = CH;
+    fig.append(cap, cv); faces.appendChild(fig);
+    previas.push({ cv, desenhar });
+  });
+  const pdf = document.createElement('button'); pdf.type = 'button'; pdf.className = 'pdf';
+  pdf.textContent = 'Baixar PDF para a gráfica (frente e verso)'; pdf.addEventListener('click', baixarPDF);
+  bt.appendChild(pdf);
+  FACES.forEach(([face, desenhar]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = `Baixar ${face} (PNG)`;
+    b.addEventListener('click', () => baixarPNG(face, desenhar));
+    bt.appendChild(b);
+  });
+}
+const redesenhar = () => previas.forEach(p => pintar(p.cv, p.desenhar, chkGuia.checked));
+chkGuia.addEventListener('change', redesenhar);
+document.getElementById('link-vale').href = linkZap(CONFIG.msgVale);
+
+/* Escolher a foto: lê o arquivo do computador e redesenha */
+document.getElementById('arquivo').addEventListener('change', e => {
+  const arq = e.target.files[0]; if (!arq) return;
+  const leitor = new FileReader();
+  leitor.onload = () => { const im = new Image(); im.onload = () => { FOTO.img = im; redesenhar(); }; im.src = leitor.result; };
+  leitor.readAsDataURL(arq);
+});
+/* Controles de enquadramento */
+[['zoom', 'zoom'], ['fx', 'fx'], ['fy', 'fy']].forEach(([id, chave]) => {
+  document.getElementById(id).addEventListener('input', e => { FOTO[chave] = parseFloat(e.target.value); redesenhar(); });
+});
+
+/* Espera as letras carregarem antes de desenhar (senão sai com a letra do computador) */
+(async () => {
+  try {
+    await Promise.all(['400 40px Inter', '600 40px Inter', '700 40px Inter', "500 40px 'IBM Plex Mono'", "600 40px 'IBM Plex Mono'"].map(f => document.fonts.load(f)));
+  } catch (e) { /* sem internet: usa a letra do computador */ }
+  if (typeof qrcode === 'undefined') document.getElementById('erro').style.display = 'block';
+  document.getElementById('carregando').hidden = true;
+  montar(); redesenhar();
+})();
+</script>
+</body>
+</html>
